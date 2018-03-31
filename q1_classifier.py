@@ -29,6 +29,8 @@ class SoftmaxModel(Model):
     """Implements a Softmax classifier with cross-entropy loss."""
     input_placeholder = None
     labels_placeholder = None
+    W = None
+    b = None
 
     def add_placeholders(self):
         """Generates placeholder variables to represent the input tensors.
@@ -98,6 +100,9 @@ class SoftmaxModel(Model):
             pred: A tensor of shape (batch_size, n_classes)
         """
         ### YOUR CODE HERE
+        self.W = tf.Variable(tf.zeros(shape=(Config.n_features, Config.n_classes)))
+        self.b = tf.Variable(tf.zeros(shape=(Config.batch_size, Config.n_classes)))
+        pred = softmax(tf.add(tf.matmul(self.input_placeholder, self.W), self.b));
         ### END YOUR CODE
         return pred
 
@@ -112,6 +117,7 @@ class SoftmaxModel(Model):
             loss: A 0-d tensor (scalar)
         """
         ### YOUR CODE HERE
+        loss = cross_entropy_loss(self.labels_placeholder, pred)
         ### END YOUR CODE
         return loss
 
