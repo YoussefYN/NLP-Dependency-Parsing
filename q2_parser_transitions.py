@@ -1,4 +1,7 @@
 class PartialParse(object):
+    stack = None
+    buffer = None
+    dependencies = None
     def __init__(self, sentence):
         """Initializes this partial parse.
 
@@ -21,6 +24,9 @@ class PartialParse(object):
         self.sentence = sentence
 
         ### YOUR CODE HERE
+        self.stack = []
+        self.buffer = sentence
+        self.dependencies = []
         ### END YOUR CODE
 
     def parse_step(self, transition):
@@ -32,6 +38,20 @@ class PartialParse(object):
                         transition.
         """
         ### YOUR CODE HERE
+        def perform_arc():
+            self.dependencies.append((head, dependent))
+            self.stack.append(head)
+
+        if transition == "S":
+            self.stack.append(self.buffer.pop(0))
+        elif transition == "LA":
+            head = self.stack.pop()
+            dependent = self.stack.pop()
+            perform_arc()
+        elif transition == "RA":
+            dependent = self.stack.pop()
+            head = self.stack.pop()
+            perform_arc()
         ### END YOUR CODE
 
     def parse(self, transitions):
@@ -85,7 +105,7 @@ def test_step(name, transition, stack, buf, deps,
         "{:} test resulted in buffer {:}, expected {:}".format(name, buf, ex_buf)
     assert deps == ex_deps, \
         "{:} test resulted in dependency list {:}, expected {:}".format(name, deps, ex_deps)
-    print "{:} test passed!".format(name)
+    print("{:} test passed!".format(name))
 
 
 def test_parse_step():
@@ -112,7 +132,7 @@ def test_parse():
         "parse test resulted in dependencies {:}, expected {:}".format(dependencies, expected)
     assert tuple(sentence) == ("parse", "this", "sentence"), \
         "parse test failed: the input sentence should not be modified"
-    print "parse test passed!"
+    print("parse test passed!")
 
 
 class DummyModel(object):
@@ -149,7 +169,7 @@ def test_minibatch_parse():
                       (('only', 'ROOT'), ('only', 'arcs'), ('only', 'left')))
     test_dependencies("minibatch_parse", deps[3],
                       (('again', 'ROOT'), ('again', 'arcs'), ('again', 'left'), ('again', 'only')))
-    print "minibatch_parse test passed!"
+    print("minibatch_parse test passed!")
 
 if __name__ == '__main__':
     test_parse_step()
