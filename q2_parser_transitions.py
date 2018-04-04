@@ -94,8 +94,11 @@ def minibatch_parse(sentences, model, batch_size):
         end = min(start + batch_size, len(unfinished_parses))
         batch_transitions = model.predict(list(zip(*unfinished_parses[start: end]))[0])
         to_remove = []
-        for i in range(start, end):
+        for i in range(start, end, batch_size):
             parse_sentence = unfinished_parses[i][0]
+            if (not parse_sentence.buffer) and (len(parse_sentence.stack) == 1):
+                to_remove.append(i)
+                continue
             dependencies_sentence = parse_sentence.parse([batch_transitions[i - start]])
             if (not parse_sentence.buffer) and (len(parse_sentence.stack) == 1):
                 idx = unfinished_parses[i][1]

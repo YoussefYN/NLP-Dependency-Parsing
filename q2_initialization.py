@@ -28,7 +28,7 @@ def xavier_weight_init():
         import math
         epsilon = math.sqrt(6) / math.sqrt(math.fsum(shape))
         initial_value = np.random.uniform(-epsilon, epsilon, shape)
-        out = tf.Variable(initial_value=initial_value)
+        out = tf.Variable(initial_value=initial_value, dtype=tf.float32)
         ### END YOUR CODE
         return out
     # Returns defined initializer function.
